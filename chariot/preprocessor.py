@@ -98,14 +98,13 @@ class Preprocessor(_BaseComposition, BaseEstimator, TransformerMixin):
             t.fit(Xt)
             if not isinstance(t, Vocabulary):
                 original_copy_setting = t.copy
-                if not copied:
-                    # Do not transform original X
-                    t.copy = False
-                    copied = True
-                else:
+                if copied:
+                    # Don't re-copy data once it has been copied.
                     t.copy = False
                 Xt = t.transform(Xt)
                 t.copy = original_copy_setting
+                if not copied:
+                    copied = t.copy
         return self
 
     def fit_transform(self, X, y=None):
